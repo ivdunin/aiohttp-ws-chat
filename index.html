@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+
+<!-- форма для отправки сообщений -->
+<table border="1">
+  <tr>
+    <td>
+      <form name="publish1">
+        <input type="text" name="message"/>
+        <input type="submit" value="Отправить"/>
+      </form>
+      <textarea id="msg1" readonly rows="10" cols="20"></textarea>
+    </td>
+    <td>
+      <form name="publish2">
+        <input type="text" name="message"/>
+        <input type="submit" value="Отправить"/>
+      </form>
+      <textarea id="msg2" readonly rows="10" cols="20"></textarea>
+    </td>
+  </tr>
+</table>
+
+<script language="javascript" type="text/javascript">
+  if (!window.WebSocket) {
+      document.body.innerHTML = 'WebSocket в этом браузере не поддерживается.';
+  }
+
+  let socket1 = new WebSocket("ws://127.0.0.1:8080/ws?token=12345");
+  let socket2 = new WebSocket("ws://127.0.0.1:8080/ws?token=54321");
+
+  document.forms.publish1.onsubmit = function() {
+    let outgoingMessage = this.message.value;
+    let j={"id": "54321", "msg": outgoingMessage};
+
+    socket1.send(JSON.stringify(j));
+    return false;
+  };
+
+  document.forms.publish2.onsubmit = function() {
+    let outgoingMessage = this.message.value;
+    let j={"id": "12345", "msg": outgoingMessage};
+
+    socket2.send(JSON.stringify(j));
+    return false;
+  };
+
+  socket1.onmessage = function(event) {
+    let incomingMessage = event.data;
+    showMessage(incomingMessage, 'msg1');
+  };
+
+  socket2.onmessage = function(event) {
+    let incomingMessage = event.data;
+    showMessage(incomingMessage, 'msg2');
+  };
+
+  function showMessage(message, form_id) {
+    document.getElementById(form_id).value += message + '\n';
+  }
+</script>
+
+</body>
+</html>
