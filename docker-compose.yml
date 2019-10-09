@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    hostname: "my-rabbit"
+    restart: always
+    ports:
+      - 8081:15672
+      - 5672:5672
+
